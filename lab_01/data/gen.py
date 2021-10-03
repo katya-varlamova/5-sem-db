@@ -3,7 +3,7 @@ from random import randint
 from random import uniform
 from random import choice
 
-MAX_N = 1000
+MAX_N = 5
 
 rank = ["major", "ordinary"]
 passports = []
@@ -17,11 +17,12 @@ def generate_cashCollector():
     for i in range(MAX_N):
         rank_ind = randint(0, 1)
         region = randint(1, 85)
-        line = "{0}:{1}:{2}:{3}:{4}\n".format(passports[i],
+        line = "{0}:{1}:{2}:{3}:{4}:{5}\n".format(passports[i],
                                                   faker.name(),
-                                                  faker.date_of_birth(),
+                                                  faker.date_between('-40y', '-21y'),
                                                   rank[rank_ind],
-                                                  region)
+                                                  region,
+                                                  randint(1, 9))
         f.write(line)
     f.close()
 def generate_LegalEntity():
@@ -57,7 +58,7 @@ def generate_Request():
         service_ind = randint(0, 1)
         line = "{0}:{1}:{2}:{3}:{4}\n".format(randint(1, MAX_N - 1),
                                               passports[i % (MAX_N // 2)],
-                                              faker.date_this_month(),
+                                              faker.date_between('-2y', '-1y'),
                                               faker.street_address(),
                                               service[service_ind])
         f.write(line)

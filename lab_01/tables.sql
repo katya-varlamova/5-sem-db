@@ -10,15 +10,17 @@ create table if not exists CashCollector (
 	fullName varchar(30),
 	birthDate date,
     rank varchar(30),
-    region integer
+    region integer,
+    requests integer
 );
 alter table CashCollector add primary key(passport);
+alter table CashCollector add constraint birthDate check(birthDate < '2001-09-18' and not null);
 alter table CashCollector add constraint passport check (passport>=0 and passport <= 9999999999);
 alter table CashCollector add constraint fullName check (not null);
-alter table CashCollector add constraint birthDate check (not null);
 alter table CashCollector add constraint region check (region > 0 and region < 86);
 
-\copy CashCollector(passport, fullName, birthDate, rank, region) from '/Users/kate/Desktop/db/lab_01/data/collectors.csv' delimiter ':' csv;
+
+\copy CashCollector(passport, fullName, birthDate, rank, region, requests) from '/Users/kate/Desktop/db/lab_01/data/collectors.csv' delimiter ':' csv;
 
 create table if not exists LegalEntity (
 	tin bigint,
@@ -64,3 +66,4 @@ alter table  Requests add constraint collectorId check(not null);
 alter table Requests add constraint requestDate check (not null);
 \copy  Requests(objectID, collectorId, requestDate, address, service) from '/Users/kate/Desktop/db/lab_01/data/requests.csv' delimiter ':' csv;
 
+select 
