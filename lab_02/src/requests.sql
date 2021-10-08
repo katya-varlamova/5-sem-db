@@ -81,9 +81,9 @@ from requests r join cashcollector c on c.passport = r.collectorid
 
 -- паспорт, фио и количество заявок, выполненных каждым инкассатором
 select c.passport, c.fullname, test.cnt
-from cashcollector c left join (select count(r.id) as cnt, passport, fullname
-								from cashcollector c join requests r on c.passport = r.collectorID 
-								group by passport) test on test.passport=c.passport
+from cashcollector c left join (select r.collectorID as id, count(r.id) as cnt
+								from requests r
+								group by r.collectorID) test on test.id=c.passport
 
 -- id объекта и количество раз, которое этот объект был инкассируем инкассатором из региона с номером, большим, чем среднее значение региона
 select o.id,
@@ -110,7 +110,7 @@ values ('4521556322','katya varlamova', '2001-08-17', 'major', '02', 10)
 
 --многострочная вставка
 insert into cashcollector (passport, fullname, birthdate, rank, region, requests) 
-select passport, fullname, birthdate, rank, region, requests
+select passport + 1001, fullname, birthdate, rank, region, requests
 from cashcollector 
 where requests > (select avg(requests)
 				 from cashcollector)
@@ -146,3 +146,39 @@ from cashcollector c)
 
 select avg(requests)
 from cte
+
+with recursive CollectorHierarchy (DirectorID, DirectorName, WorkerID, WorkerName, level) as
+(
+select c.director, (select cc.fullname
+				   from cashcollector cc 
+				   where cc.passport = c.director), c.passport, c.fullname, 0 as level 
+from cashcollector c
+where director is null
+union all
+select c.director, (select cc.fullname
+				   from cashcollector cc 
+				   where cc.passport = c.director), c.passport, c.fullname, level + 1 
+from cashcollector c join CollectorHierarchy ch
+on c.director = ch.WorkerID
+)
+
+select DirectorID, DirectorName, WorkerID, WorkerName, Level
+from CollectorHierarchy
+
+-- минимальная дата рождения подчинённого для каждого директора 
+select c.passport, c.fullname, min(c.birthdate) over (partition by c.director order by c.passport)
+from cashcollector c
+order by c.director
+
+
+-- устранение дублей
+insert into cashcollector (passport, fullname, birthdate, rank, region, requests, director) 
+select passport + 1001, fullname, birthdate, rank, region, requests, director
+
+select *
+from (
+select passport, fullname, birthdate, rank, region, requests, director,
+	row_number() over (partition by fullname, birthdate, rank, region, requests, director) as num
+from cashcollector
+) t
+where num = 1

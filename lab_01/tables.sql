@@ -11,16 +11,18 @@ create table if not exists CashCollector (
 	birthDate date,
     rank varchar(30),
     region integer,
-    requests integer
+    requests integer, 
+    director bigint
 );
 alter table CashCollector add primary key(passport);
 alter table CashCollector add constraint birthDate check(birthDate < '2001-09-18' and not null);
 alter table CashCollector add constraint passport check (passport>=0 and passport <= 9999999999);
+alter table CashCollector add constraint director check (director>=0 and director <= 9999999999);
 alter table CashCollector add constraint fullName check (not null);
 alter table CashCollector add constraint region check (region > 0 and region < 86);
 
 
-\copy CashCollector(passport, fullName, birthDate, rank, region, requests) from '/Users/kate/Desktop/db/lab_01/data/collectors.csv' delimiter ':' csv;
+\copy CashCollector(passport, fullName, birthDate, rank, region, requests, director) from '/Users/kate/Desktop/db/lab_01/data/collectors.csv' delimiter ':' csv;
 
 create table if not exists LegalEntity (
 	tin bigint,
