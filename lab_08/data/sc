@@ -1,0 +1,9 @@
+cat cc.sql | psql -h localhost -p5433  -U postgres
+i=0
+while(true)
+do
+python3 gen.py $i
+i=$(($i+1))
+test $? -gt 128 && break
+sleep 10
+done
