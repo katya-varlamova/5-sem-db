@@ -1,5 +1,5 @@
 import psycopg2
-PASSWORD = "rfktdf17"
+PASSWORD = "pass"
 def connect_to_postgresql():
     con = psycopg2.connect(
         database="postgres",
