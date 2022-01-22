@@ -1,7 +1,7 @@
 import peewee as pw
 from playhouse.db_url import connect
 import json
-db = connect("postgresext://postgres:rfktdf17@localhost:5433/rk3")
+db = connect("postgresext://postgres:pass@localhost:5433/rk3")
 class BaseModel(pw.Model):
     class Meta:
         database = db
