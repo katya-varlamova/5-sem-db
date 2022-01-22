@@ -1,0 +1,3 @@
+cat db.sql | psql -h localhost -p5433  -U postgres && 
+cat tables.sql | psql -h localhost -p5433  -U postgres -d rk3 &&
+psql -h localhost -p5433  -U postgres -d rk3
